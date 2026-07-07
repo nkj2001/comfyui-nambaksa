@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+
+# API 키 등 민감 정보 - 절대 커밋 금지
+api_keys.json
