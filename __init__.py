@@ -1,36 +1,26 @@
-from .text_to_image_alpha import (
-    NODE_CLASS_MAPPINGS as _TIA_CLASSES,
-    NODE_DISPLAY_NAME_MAPPINGS as _TIA_NAMES,
-)
+import importlib
+import traceback
 
-NODE_CLASS_MAPPINGS = {**_TIA_CLASSES}
-NODE_DISPLAY_NAME_MAPPINGS = {**_TIA_NAMES}
+NODE_CLASS_MAPPINGS = {}
+NODE_DISPLAY_NAME_MAPPINGS = {}
 
-try:
-    from .text_generate import (
-        NODE_CLASS_MAPPINGS as _TG_CLASSES,
-        NODE_DISPLAY_NAME_MAPPINGS as _TG_NAMES,
-    )
-    NODE_CLASS_MAPPINGS.update(_TG_CLASSES)
-    NODE_DISPLAY_NAME_MAPPINGS.update(_TG_NAMES)
-    print(f"[nambaksa] text_generate 로드 완료: {list(_TG_CLASSES.keys())}")
-except Exception as e:
-    import traceback
-    print(f"[nambaksa] text_generate 로드 실패: {e}")
-    traceback.print_exc()
+_MODULES = [
+    "text_to_image_alpha",
+    "text_generate",
+    "text_replace",
+    "number",
+    "audio_video_sync",
+]
 
-try:
-    from .text_replace import (
-        NODE_CLASS_MAPPINGS as _TR_CLASSES,
-        NODE_DISPLAY_NAME_MAPPINGS as _TR_NAMES,
-    )
-    NODE_CLASS_MAPPINGS.update(_TR_CLASSES)
-    NODE_DISPLAY_NAME_MAPPINGS.update(_TR_NAMES)
-    print(f"[nambaksa] text_replace 로드 완료: {list(_TR_CLASSES.keys())}")
-except Exception as e:
-    import traceback
-    print(f"[nambaksa] text_replace 로드 실패: {e}")
-    traceback.print_exc()
+for _mod_name in _MODULES:
+    try:
+        _module = importlib.import_module(f".{_mod_name}", package=__name__)
+        NODE_CLASS_MAPPINGS.update(_module.NODE_CLASS_MAPPINGS)
+        NODE_DISPLAY_NAME_MAPPINGS.update(_module.NODE_DISPLAY_NAME_MAPPINGS)
+        print(f"[nambaksa] {_mod_name} 로드 완료: {list(_module.NODE_CLASS_MAPPINGS.keys())}")
+    except Exception as e:
+        print(f"[nambaksa] {_mod_name} 로드 실패: {e}")
+        traceback.print_exc()
 
 WEB_DIRECTORY = "./js"
 
